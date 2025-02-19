@@ -3,11 +3,17 @@ import email
 from email.policy import default
 import os
 import openpyxl
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
+# Code of your application, which uses environment variables (e.g. from `os.environ` or
+# `os.getenv`) as if they came from the actual environment.
 
 # Данные для подключения
-IMAP_SERVER = "imap.gmail.com"  # для Gmail, для других сервисов будет свой
-EMAIL_ACCOUNT = "zepovj@gmail.com"
-EMAIL_PASSWORD = "edwp wkpt slsx tjub"
+IMAP_SERVER = os.environ['IMAP_SERVER']
+EMAIL_ACCOUNT = os.environ['EMAIL_ACCOUNT']
+EMAIL_PASSWORD = os.environ['EMAIL_PASSWORD']
 
 def connect_mail():
     """Подключение к почтовому ящику."""
