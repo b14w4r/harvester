@@ -7,11 +7,9 @@ from glob import glob
 import openpyxl
 from dotenv import load_dotenv
 from file_fixer import process_file
+from injector import injection
 
-load_dotenv()  # take environment variables from .env.
-
-# Code of your application, which uses environment variables (e.g. from `os.environ` or
-# `os.getenv`) as if they came from the actual environment.
+load_dotenv()
 
 # Данные для подключения
 IMAP_SERVER = os.environ['IMAP_SERVER']
@@ -22,7 +20,7 @@ def connect_mail():
     """Подключение к почтовому ящику."""
     mail = imaplib.IMAP4_SSL(IMAP_SERVER)
     print(f"Подключение к {IMAP_SERVER} как {EMAIL_ACCOUNT}")
-    mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)  # Тут может быть ошибка
+    mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
     mail.select("inbox")
     return mail
 
@@ -44,16 +42,15 @@ def download_attachments(msg):
             with open(filepath, "wb") as f:
                 f.write(part.get_payload(decode=True))
             print(f"Сохранен файл: {filename}")
-            # process_excel(filepath)
 
-'''
-def process_excel(filepath):
-    """Обработка Excel файла."""
-    wb = openpyxl.load_workbook(filepath)
-    sheet = wb.active
-    for row in sheet.iter_rows(values_only=True):
-        print(row)  # Здесь можно делать что-то с данными
-'''
+def filing():
+    csv_files = glob("*.csv")
+
+    if not csv_files:
+        print("❌ В текущей папке нет CSV-файлов.")
+    else:
+        for file in csv_files:
+            injection(process_file(file))
 
 if __name__ == "__main__":
     mail = connect_mail()
@@ -65,14 +62,9 @@ if __name__ == "__main__":
             continue
 
         msg = email.message_from_bytes(msg_data[0][1], policy=default)
+        print("here works")
         download_attachments(msg)
+        filing()
 
-        csv_files = glob("*.csv")
-
-        if not csv_files:
-            print("❌ В текущей папке нет CSV-файлов.")
-        else:
-            for file in csv_files:
-                process_file(file)
 
     mail.logout()

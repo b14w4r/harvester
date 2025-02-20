@@ -1,6 +1,3 @@
-from glob import glob
-import sqlalchemy as db
-
 import pandas as pd
 
 def process_file(file_path):
@@ -43,28 +40,5 @@ def process_file(file_path):
     table["date"] = date
 
     print("Обработанная таблица:")
-    print(type(table))
     print(table)
-
-    def injection(table):
-        connection = db.create_engine("postgresql://myuser:mypassword@localhost:5432/mydb")
-        table.to_sql(
-            "prices",
-            connection,
-            index=False,
-            if_exists="replace",
-            dtype={
-                "price": db.Float()
-            },
-        )
-    injection(table)
     return table
-
-csv_files = glob("*.xlsx")
-
-if not csv_files:
-    print("❌ В текущей папке нет CSV-файлов.")
-else:
-    for file in csv_files:
-        process_file(file)
-# Пример использования
