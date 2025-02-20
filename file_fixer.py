@@ -32,11 +32,11 @@ def process_file(file_path):
 
     # Читаем таблицу
     table = df.iloc[start_idx:].dropna(how="all")  # Убираем пустые строки
-    table.columns = ["id", "Цена за единицу"]
+    table.columns = ["product_id", "price"]
 
     # Приводим id к int, а Цена за единицу к float
-    table["id"] = table["id"].astype(int)
-    table["Цена за единицу"] = table["Цена за единицу"].astype(float)
+    table["product_id"] = table["product_id"].astype(int)
+    table["price"] = table["price"].astype(float)
     table["date"] = date
 
     print("Обработанная таблица:")

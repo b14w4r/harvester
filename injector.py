@@ -6,7 +6,7 @@ def injection(table):
         "prices",
         connection,
         index=False,
-        if_exists="replace",
+        if_exists="append",
         dtype={
             "price": db.Float()
         },

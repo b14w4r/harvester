@@ -44,12 +44,11 @@ def download_attachments(msg):
             print(f"Сохранен файл: {filename}")
 
 def filing():
-    csv_files = glob("*.csv")
-
-    if not csv_files:
-        print("❌ В текущей папке нет CSV-файлов.")
+    data_files = glob("*.csv") + glob("*.xlsx")
+    if not data_files:
+        print("❌ В текущей папке нет CSV или XLSEADDMEов.")
     else:
-        for file in csv_files:
+        for file in data_files:
             injection(process_file(file))
 
 if __name__ == "__main__":
