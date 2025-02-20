@@ -1,4 +1,5 @@
 from glob import glob
+import sqlalchemy as db
 
 import pandas as pd
 
@@ -39,13 +40,27 @@ def process_file(file_path):
     # Приводим id к int, а Цена за единицу к float
     table["id"] = table["id"].astype(int)
     table["Цена за единицу"] = table["Цена за единицу"].astype(float)
+    table["date"] = date
 
     print("Обработанная таблица:")
+    print(type(table))
     print(table)
 
+    def injection(table):
+        connection = db.create_engine("postgresql://myuser:mypassword@localhost:5432/mydb")
+        table.to_sql(
+            "prices",
+            connection,
+            index=False,
+            if_exists="replace",
+            dtype={
+                "price": db.Float()
+            },
+        )
+    injection(table)
     return table
 
-csv_files = glob("*.csv")
+csv_files = glob("*.xlsx")
 
 if not csv_files:
     print("❌ В текущей папке нет CSV-файлов.")

@@ -2,8 +2,11 @@ import imaplib
 import email
 from email.policy import default
 import os
+from glob import glob
+
 import openpyxl
 from dotenv import load_dotenv
+from file_fixer import process_file
 
 load_dotenv()  # take environment variables from .env.
 
@@ -36,21 +39,21 @@ def download_attachments(msg):
     """Скачивание вложений из письма и проверка на Excel."""
     for part in msg.iter_attachments():
         filename = part.get_filename()
-        if filename and filename.endswith((".xls", ".xlsx")):
+        if filename and filename.endswith((".xls", ".xlsx", ".csv")):
             filepath = os.path.join(filename)
             with open(filepath, "wb") as f:
                 f.write(part.get_payload(decode=True))
             print(f"Сохранен файл: {filename}")
-            process_excel(filepath)
+            # process_excel(filepath)
 
-
+'''
 def process_excel(filepath):
     """Обработка Excel файла."""
     wb = openpyxl.load_workbook(filepath)
     sheet = wb.active
     for row in sheet.iter_rows(values_only=True):
         print(row)  # Здесь можно делать что-то с данными
-
+'''
 
 if __name__ == "__main__":
     mail = connect_mail()
@@ -63,5 +66,13 @@ if __name__ == "__main__":
 
         msg = email.message_from_bytes(msg_data[0][1], policy=default)
         download_attachments(msg)
+
+        csv_files = glob("*.csv")
+
+        if not csv_files:
+            print("❌ В текущей папке нет CSV-файлов.")
+        else:
+            for file in csv_files:
+                process_file(file)
 
     mail.logout()
