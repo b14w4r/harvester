@@ -51,6 +51,20 @@ def filing():
         for file in data_files:
             injection(process_file(file))
 
+def cleanup(extensions: tuple = (".xlsx", ".csv")):
+    directory = os.path.dirname(os.path.abspath(__file__))
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if os.path.isfile(file_path) and filename.endswith(extensions):
+            try:
+                os.remove(file_path)
+                print(f"Удалён: {file_path}")
+            except Exception as e:
+                print(f"Ошибка удаления {file_path}: {e}")
+
+    print("Лишние файлы удалены")
+
+
 if __name__ == "__main__":
     mail = connect_mail()
     email_ids = fetch_unread_emails(mail)
@@ -64,6 +78,6 @@ if __name__ == "__main__":
         print("here works")
         download_attachments(msg)
         filing()
-
+    cleanup()
 
     mail.logout()

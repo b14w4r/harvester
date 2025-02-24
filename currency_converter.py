@@ -18,9 +18,7 @@ def conversion(date, currency):
             'currencies': currency,
             'date':date})
 
-        return response.json()['data'][currency]['value']
+        return float(response.json()['data'][currency]['value'])
     except Exception as e:
         print(e)
         return 1.0
-
-print(conversion('202-01-01', 'USD'))

@@ -1,6 +1,11 @@
+from typing import Any
+
 import pandas as pd
+from currency_converter import conversion
+
 
 def process_file(file_path):
+    exchange_rate = 1.0
     # Определяем, xlsx это или csv
     if file_path.endswith('.xlsx'):
         df = pd.read_excel(file_path, header=None)
@@ -20,6 +25,14 @@ def process_file(file_path):
 
     print(f"Дата актуальности: {date.date()}")
 
+    for i in range(1, len(df)):
+        if df.iloc[i, 0] == "Валюта" and df.iloc[i, 1] in ["USD", "EUR", "RUB"]:
+            currency = df.iloc[i, 1]
+            print(f"💰 Найдена валюта: {currency}")
+            exchange_rate = conversion(date, currency)
+            print("()()(()()()())()()())()", exchange_rate)
+            break  # Нашли валюту, дальше не ищем
+
     # Ищем начало таблицы (столбцы id и Цена за единицу)
     start_idx = None
     for i in range(1, len(df)):
@@ -36,7 +49,7 @@ def process_file(file_path):
 
     # Приводим id к int, а Цена за единицу к float
     table["product_id"] = table["product_id"].astype(int)
-    table["price"] = table["price"].astype(float)
+    table["price"] = (table["price"] * exchange_rate).astype(float)
     table["date"] = date
 
     print("Обработанная таблица:")
