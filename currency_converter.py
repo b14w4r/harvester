@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-API_KEY = os.environ['API_KEY']
+API_KEY = os.environ['CURRENCY_API_KEY']
 url = "https://api.currencyapi.com/v3/historical"
 headers = {
     'apikey': API_KEY,

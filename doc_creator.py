@@ -2,14 +2,14 @@ import random
 import pandas as pd
 from datetime import datetime
 
-k = 100
+k = 5
 # Генерация одинаковых случайных id для всех файлов
 fixed_ids = random.sample(range(50, 150), k)
 
 for i in range(12):
     # Генерация случайной даты с разными месяцами в 2025 году
     month = random.randint(1, 12)
-    date = datetime(2025, month, 20).strftime("%d.%m.%Y")
+    date = datetime(2024, month, 20).strftime("%d.%m.%Y")
 
     # Генерация случайных данных для id и цены
     data = {

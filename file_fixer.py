@@ -1,8 +1,6 @@
-from typing import Any
-
 import pandas as pd
 from currency_converter import conversion
-
+from weather_requester import weather_table_inject
 
 def process_file(file_path):
     exchange_rate = 1.0
@@ -22,7 +20,7 @@ def process_file(file_path):
         date = pd.to_datetime(date_value, dayfirst=True)  # Парсим дату
     except ValueError:
         raise ValueError("Вторая ячейка не является корректной датой.")
-
+    weather_table_inject(date_value)
     print(f"Дата актуальности: {date.date()}")
 
     for i in range(1, len(df)):
@@ -30,7 +28,6 @@ def process_file(file_path):
             currency = df.iloc[i, 1]
             print(f"💰 Найдена валюта: {currency}")
             exchange_rate = conversion(date, currency)
-            print("()()(()()()())()()())()", exchange_rate)
             break  # Нашли валюту, дальше не ищем
 
     # Ищем начало таблицы (столбцы id и Цена за единицу)
@@ -52,6 +49,5 @@ def process_file(file_path):
     table["price"] = (table["price"] * exchange_rate).astype(float)
     table["date"] = date
 
-    print("Обработанная таблица:")
-    print(table)
+    print("Таблица обработана")
     return table
