@@ -42,29 +42,23 @@ WMO_CODES = {
 
 latitude = '55.7522'
 longitude = '37.6156'
-start_date = '2024-02-23'
-end_date = '2024-02-23'
 
 daily='weather_code,temperature_2m_mean'
 timezone='Europe/Moscow'
 
 def weather_table_inject(date):
-	# try
-	formatted_date = datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
 	response = requests.request("GET", url, params={
 		'latitude':latitude,
 		'longitude':longitude,
 		'daily':daily,
 		'timezone':timezone,
-		'start_date': formatted_date,
-		'end_date': formatted_date})
+		'start_date': date,
+		'end_date': date})
 	print(response.json())
-	res = (formatted_date,
+	res = (date,
 		   float(response.json()["daily"]["temperature_2m_mean"][0]),
 		   str(WMO_CODES[str(response.json()["daily"]["weather_code"][0])]))
 	insert_weather_data(res)
-	# except Exception as e:
-	# 	print(e)
 
 def insert_weather_data(data):
 	engine = db.create_engine(
@@ -77,7 +71,3 @@ def insert_weather_data(data):
 	        """)
 		connection.execute(query, {"val1": data[0], "val2": data[1], "val3": data[2]})
 		connection.commit()
-
-
-# insert_data(data)
-

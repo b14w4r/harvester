@@ -6,9 +6,11 @@ k = 5
 # Генерация одинаковых случайных id для всех файлов
 fixed_ids = random.sample(range(50, 150), k)
 
-for i in range(12):
+for i in range(3):
     # Генерация случайной даты с разными месяцами в 2025 году
-    month = random.randint(1, 12)
+    month = (11+i)%12# random.randint(1, 12)
+    if month == 0:
+        month = 12
     date = datetime(2024, month, 20).strftime("%d.%m.%Y")
 
     # Генерация случайных данных для id и цены

@@ -4,10 +4,11 @@ from email.policy import default
 import os
 from glob import glob
 
-import openpyxl
+import sqlalchemy as db
 from dotenv import load_dotenv
 from file_fixer import process_file
 from injector import injection
+from weather_requester import weather_table_inject
 
 load_dotenv()
 
@@ -65,6 +66,23 @@ def cleanup(extensions: tuple = (".xlsx", ".csv")):
     print("Лишние файлы удалены")
 
 
+def find_missing_dates():
+    engine = db.create_engine(
+        "postgresql://neondb_owner:npg_FBvTi18ySpoY@ep-yellow-salad-a9lbdmij-pooler.gwc.azure.neon.tech/neondb?sslmode=require")
+
+    with engine.connect() as connection:
+        query = db.text("""
+            SELECT DISTINCT p.date 
+            FROM prices p
+            LEFT JOIN weather w ON p.date = w.date
+            WHERE w.date IS NULL;
+        """)
+        result = connection.execute(query)
+
+        for row in result:
+            weather_table_inject(row[0])
+
+
 if __name__ == "__main__":
     mail = connect_mail()
     email_ids = fetch_unread_emails(mail)
@@ -79,5 +97,6 @@ if __name__ == "__main__":
         download_attachments(msg)
         filing()
     cleanup()
+    find_missing_dates()
 
     mail.logout()

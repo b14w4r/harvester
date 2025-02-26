@@ -1,6 +1,5 @@
 import pandas as pd
 from currency_converter import conversion
-from weather_requester import weather_table_inject
 
 def process_file(file_path):
     exchange_rate = 1.0
